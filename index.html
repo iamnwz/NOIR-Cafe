@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOIR — Specialty Coffee & Café</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header id="header">
+        <div class="nav-container">
+            <a href="#home" class="logo">NOIR</a>
+            <nav class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#menu" class="nav-link">Menu</a>
+                <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#reviews" class="nav-link">Reviews</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">Welcome to NOIR</span>
+            <h1>Specialty Coffee & Café</h1>
+            <p>Experience artisanal brews, handcrafted pastries, and a serene minimalist atmosphere right in the heart of Karachi.</p>
+            <div class="hero-buttons">
+                <a href="#menu" class="btn btn-primary">View Menu</a>
+                <a href="#contact" class="btn btn-secondary">Find Us</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1000&q=80" alt="NOIR Café Interior">
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container about-grid">
+            <div class="about-img">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80" alt="Coffee pouring">
+            </div>
+            <div class="about-text">
+                <h2>Crafted with Passion & Precision</h2>
+                <p>Founded with a deep appreciation for exceptional coffee culture, NOIR is a haven for those who seek tranquility and uncompromising flavor. From ethically sourced specialty beans roasted to perfection to freshly baked artisan goods every morning, every detail is curated to offer you a moment of pure calm.</p>
+                <div class="about-features">
+                    <div class="feature-item">
+                        <span class="feature-dot"></span>
+                        <p>100% Arabica Specialty Beans</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-dot"></span>
+                        <p>Artisanal Daily Baked Goods</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-dot"></span>
+                        <p>Warm Minimalist Aesthetic</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="menu">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Curated Menu</h2>
+                <p>Explore our carefully selected range of specialty coffees, wholesome breakfasts, and delicate desserts.</p>
+            </div>
+
+            <!-- Menu Category Filters -->
+            <div class="menu-filters">
+                <button class="filter-btn active" data-filter="all">All Items</button>
+                <button class="filter-btn" data-filter="coffee">Coffee</button>
+                <button class="filter-btn" data-filter="breakfast">Breakfast</button>
+                <button class="filter-btn" data-filter="desserts">Desserts</button>
+            </div>
+
+            <!-- Menu Items Grid -->
+            <div class="menu-grid">
+                <!-- Coffee Items -->
+                <div class="menu-card" data-category="coffee">
+                    <div class="menu-item-header">
+                        <h3>Signature Spanish Latte</h3>
+                        <span class="price">Rs. 750</span>
+                    </div>
+                    <p>Double shot espresso with condensed milk and textured velvety microfoam.</p>
+                </div>
+                <div class="menu-card" data-category="coffee">
+                    <div class="menu-item-header">
+                        <h3>V60 Pour Over</h3>
+                        <span class="price">Rs. 680</span>
+                    </div>
+                    <p>Single-origin artisanal bean brew highlighting crisp floral and citrus notes.</p>
+                </div>
+                <div class="menu-card" data-category="coffee">
+                    <div class="menu-item-header">
+                        <h3>Velvet Flat White</h3>
+                        <span class="price">Rs. 650</span>
+                    </div>
+                    <p>Rich ristretto shots paired with perfectly stretched silk-smooth milk.</p>
+                </div>
+                <div class="menu-card" data-category="coffee">
+                    <div class="menu-item-header">
+                        <h3>Iced Sea Salt Mocha</h3>
+                        <span class="price">Rs. 820</span>
+                    </div>
+                    <p>Dark artisanal chocolate, espresso, chilled milk, topped with a dash of sea salt foam.</p>
+                </div>
+
+                <!-- Breakfast Items -->
+                <div class="menu-card" data-category="breakfast">
+                    <div class="menu-item-header">
+                        <h3>Avocado Sourdough Toast</h3>
+                        <span class="price">Rs. 1,150</span>
+                    </div>
+                    <p>Mashed avocado, poached organic eggs, chili flakes, and microgreens on rustic sourdough.</p>
+                </div>
+                <div class="menu-card" data-category="breakfast">
+                    <div class="menu-item-header">
+                        <h3>Truffle Scrambled Eggs</h3>
+                        <span class="price">Rs. 980</span>
+                    </div>
+                    <p>Soft-scrambled farm eggs infused with black truffle oil and chives on brioche.</p>
+                </div>
+                <div class="menu-card" data-category="breakfast">
+                    <div class="menu-item-header">
+                        <h3>Classic French Omelette</h3>
+                        <span class="price">Rs. 890</span>
+                    </div>
+                    <p>Folded golden herb omelette served with sautéed mushrooms and buttered toast.</p>
+                </div>
+
+                <!-- Dessert Items -->
+                <div class="menu-card" data-category="desserts">
+                    <div class="menu-item-header">
+                        <h3>Burnt Basque Cheesecake</h3>
+                        <span class="price">Rs. 850</span>
+                    </div>
+                    <p>Creamy, crustless cheesecake with a caramelized top and velvety texture.</p>
+                </div>
+                <div class="menu-card" data-category="desserts">
+                    <div class="menu-item-header">
+                        <h3>Almond Croissant</h3>
+                        <span class="price">Rs. 550</span>
+                    </div>
+                    <p>Flaky, golden-baked French pastry filled with rich almond frangipane cream.</p>
+                </div>
+                <div class="menu-card" data-category="desserts">
+                    <div class="menu-item-header">
+                        <h3>Dark Chocolate Tart</h3>
+                        <span class="price">Rs. 720</span>
+                    </div>
+                    <p>Rich single-origin Belgian chocolate ganache in a crisp cocoa shortcrust shell.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery">
+        <div class="container">
+            <div class="section-title">
+                <h2>Moments at NOIR</h2>
+                <p>A glimpse into our space, craft, and everyday ambience.</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=700&q=80" alt="Barista pouring coffee">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=700&q=80" alt="Café seating">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=700&q=80" alt="Fresh pastries">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=700&q=80" alt="Espresso machine">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=700&q=80" alt="Latte art">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1497636577773-f1231844b336?auto=format&fit=crop&w=700&q=80" alt="Cozy corners">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="reviews">
+        <div class="container">
+            <div class="section-title">
+                <h2>Customer Words</h2>
+                <p>What our community has to say about their experience.</p>
+            </div>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="review-text">"NOIR has easily become my favorite spot in Karachi. The Spanish Latte is out of this world, and the ambiance makes it the perfect place to unwind or read."</p>
+                    <span class="reviewer">— Alishba Khan</span>
+                </div>
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="review-text">"Immaculate interior design with high attention to detail. Their avocado toast and burnt Basque cheesecake are absolute must-tries!"</p>
+                    <span class="reviewer">— Daniyal Ahmed</span>
+                </div>
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="review-text">"The quietest, most peaceful café in DHA. The staff is exceptionally polite, and their pour-over coffee is a true testament to specialty brewing."</p>
+                    <span class="reviewer">— Zainab Malik</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Visit Us Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Visit Us</h2>
+                <p>We are always delighted to welcome you to our space.</p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-info">
+                    <div class="info-group">
+                        <h3>Location</h3>
+                        <p>Plot 24-C, Khayaban-e-Seher, DHA Phase 6, Karachi, Pakistan</p>
+                    </div>
+                    <div class="info-group">
+                        <h3>Opening Hours</h3>
+                        <p>Monday – Sunday: 8:00 AM – 12:00 Midnight</p>
+                    </div>
+                    <div class="info-group">
+                        <h3>Phone</h3>
+                        <p>+92 21 35290000</p>
+                    </div>
+                    <div class="social-buttons">
+                        <a href="https://whatsapp.com" target="_blank" class="social-btn whatsapp">WhatsApp Us</a>
+                        <a href="https://instagram.com" target="_blank" class="social-btn instagram">Instagram</a>
+                        <a href="https://maps.google.com" target="_blank" class="social-btn maps">Google Maps</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <p>&copy; 2026 NOIR Specialty Coffee & Café. All rights reserved.</p>
+            <p class="footer-tag">Crafted with minimalism & care.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript File Link -->
+    <script src="script.js"></script>
+</body>
+</html>
