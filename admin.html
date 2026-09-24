@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#15110D">
+<meta name="color-scheme" content="dark">
+<title>NOIR | Admin Dashboard</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================================
+   TOKENS
+   ========================================================================= */
+:root {
+    --ink: #15110D;
+    --ink-2: #1B1611;
+    --surface: #1E1811;
+    --surface-hover: #241D15;
+    --line: #33291F;
+    --line-soft: #241D15;
+    --ivory: #F3ECE2;
+    --taupe: #A79880;
+    --taupe-dim: #6E6254;
+    --brass: #C9A063;
+    --brass-hover: #D9B27B;
+    --brass-wash: rgba(201, 160, 99, 0.12);
+    --pending: #D6A24C;
+    --pending-wash: rgba(214, 162, 76, 0.12);
+    --confirmed: #7C9473;
+    --confirmed-wash: rgba(124, 148, 115, 0.14);
+    --cancelled: #C15B41;
+    --cancelled-wash: rgba(193, 91, 65, 0.12);
+    --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.55);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --font-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: var(--ink);
+    color: var(--ivory);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+button, input, select { font-family: inherit; }
+svg { display: block; }
+::selection { background: var(--brass-wash); color: var(--ivory); }
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; border-radius: 4px; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--taupe-dim); }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+/* =========================================================================
+   BUTTONS & FORM CONTROLS (shared by login + dashboard)
+   ========================================================================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn--primary { background: var(--brass); color: var(--ink); }
+.btn--primary:hover:not(:disabled) { background: var(--brass-hover); }
+.btn--block { width: 100%; }
+.btn--ghost { background: transparent; border-color: var(--line); color: var(--ivory); }
+.btn--ghost:hover:not(:disabled) { border-color: var(--taupe); background: rgba(255, 255, 255, 0.03); }
+.btn--danger { background: var(--cancelled-wash); border-color: rgba(193, 91, 65, 0.4); color: #E39A85; }
+.btn--danger:hover:not(:disabled) { background: rgba(193, 91, 65, 0.28); border-color: rgba(193, 91, 65, 0.7); }
+
+.spinner {
+    width: 15px; height: 15px; border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.25); border-top-color: currentColor;
+    animation: spin 0.7s linear infinite;
+}
+.btn--ghost .spinner, .btn--danger .spinner { border-color: rgba(255, 255, 255, 0.2); border-top-color: currentColor; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.field { margin-bottom: 1.25rem; }
+.field label { display: block; font-size: 0.8rem; color: var(--taupe); margin-bottom: 0.5rem; }
+.field input[type="text"],
+.field input[type="password"],
+.field input[type="date"],
+.field select {
+    width: 100%;
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    color: var(--ivory);
+    padding: 0.7rem 0.85rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.92rem;
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+.field input::placeholder { color: var(--taupe-dim); }
+.field input:focus, .field select:focus {
+    outline: none; border-color: var(--brass); box-shadow: 0 0 0 3px var(--brass-wash);
+}
+.field select { appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23A79880' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 0.9rem center; padding-right: 2.2rem;
+}
+
+/* =========================================================================
+   LOGIN SCREEN
+   ========================================================================= */
+.login-screen {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem 1.25rem;
+    background: radial-gradient(1200px 600px at 50% -10%, rgba(201, 160, 99, 0.08), transparent 60%), var(--ink);
+}
+.login-card { width: 100%; max-width: 380px; }
+.login-brand { text-align: center; margin-bottom: 2.25rem; }
+.login-brand .brand-mark { font-family: var(--font-serif); font-size: 2rem; letter-spacing: 3px; text-transform: uppercase; }
+.login-brand .brand-mark span { color: var(--brass); }
+.login-brand p { color: var(--taupe); font-size: 0.85rem; margin-top: 0.5rem; }
+
+.login-panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 2rem; }
+
+.password-field { position: relative; }
+.password-field input { padding-right: 2.75rem; }
+.password-toggle {
+    position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--taupe); padding: 0.45rem; cursor: pointer; border-radius: 6px;
+}
+.password-toggle:hover { color: var(--ivory); }
+.password-toggle .eye-slash { display: none; }
+
+.field-row { display: flex; align-items: center; margin-bottom: 1.5rem; }
+.checkbox-field { display: flex; align-items: center; gap: 0.55rem; font-size: 0.85rem; color: var(--taupe); cursor: pointer; }
+.checkbox-field input { width: 16px; height: 16px; accent-color: var(--brass); cursor: pointer; }
+
+.login-error {
+    display: none;
+    background: var(--cancelled-wash); border: 1px solid rgba(193, 91, 65, 0.35); color: #E39A85;
+    padding: 0.7rem 0.9rem; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 1.1rem;
+}
+.login-error.show { display: block; }
+
+.login-note {
+    text-align: center; color: var(--taupe-dim); font-size: 0.75rem; line-height: 1.6;
+    margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px dashed var(--line);
+}
+
+/* =========================================================================
+   TOPBAR
+   ========================================================================= */
+.topbar {
+    background: var(--ink-2); border-bottom: 1px solid var(--line);
+    padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+}
+.brand { display: flex; align-items: baseline; gap: 0.9rem; }
+.brand-mark { font-family: var(--font-serif); font-size: 1.35rem; letter-spacing: 2px; text-transform: uppercase; }
+.brand-mark span { color: var(--brass); }
+.brand-sub { color: var(--taupe); font-size: 0.85rem; padding-left: 0.9rem; border-left: 1px solid var(--line); display: none; }
+@media (min-width: 640px) { .brand-sub { display: inline; } }
+
+/* =========================================================================
+   DASHBOARD LAYOUT
+   ========================================================================= */
+.dashboard { max-width: 1180px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.dashboard-head { margin-bottom: 1.75rem; }
+.dashboard-head h1 { font-family: var(--font-serif); font-weight: 500; font-size: 1.85rem; margin-bottom: 0.35rem; }
+.dashboard-head p { color: var(--taupe); font-size: 0.92rem; }
+
+/* Stat strip: one bordered strip divided by hairlines, not four separate cards */
+.stats-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+    margin-bottom: 2rem; background: var(--surface);
+}
+.stat { padding: 1.25rem 1.5rem; border-right: 1px solid var(--line); }
+.stat:last-child { border-right: none; }
+.stat__value { font-size: 2rem; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: -0.5px; }
+.stat__label { color: var(--taupe); font-size: 0.82rem; margin-top: 0.3rem; }
+.stat--pending .stat__value { color: var(--pending); }
+.stat--confirmed .stat__value { color: var(--confirmed); }
+.stat--cancelled .stat__value { color: var(--cancelled); }
+
+@media (max-width: 640px) {
+    .stats-strip { grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(even) { border-right: none; }
+    .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+
+/* Toolbar: search + filters */
+.toolbar { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-bottom: 1.5rem; }
+.toolbar .field { margin-bottom: 0; flex: 1; min-width: 170px; }
+.toolbar .field--search { flex: 2; min-width: 220px; }
+.search-wrap { position: relative; }
+.search-wrap svg { position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--taupe); pointer-events: none; }
+.search-wrap input { padding-left: 2.4rem; }
+
+/* Table card */
+.table-card { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); overflow: hidden; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.95rem 1.25rem; white-space: nowrap; }
+th.num, td.num { text-align: right; }
+thead th { color: var(--taupe); font-size: 0.78rem; font-weight: 600; border-bottom: 1px solid var(--line); background: rgba(0, 0, 0, 0.15); }
+tbody tr { border-bottom: 1px solid var(--line-soft); transition: background 0.15s var(--ease); }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(255, 255, 255, 0.015); }
+
+/* Status control */
+.status-control { position: relative; display: inline-block; }
+.status-trigger {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: transparent; border: 1px solid var(--line);
+    padding: 0.35rem 0.7rem; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600; cursor: pointer; color: var(--ivory);
+    transition: border-color 0.15s var(--ease);
+}
+.status-trigger:hover { border-color: var(--taupe); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.status-trigger svg { opacity: 0.7; }
+.status-trigger.is-pending { color: var(--pending); background: var(--pending-wash); border-color: rgba(214, 162, 76, 0.3); }
+.status-trigger.is-pending .status-dot { background: var(--pending); }
+.status-trigger.is-confirmed { color: var(--confirmed); background: var(--confirmed-wash); border-color: rgba(124, 148, 115, 0.3); }
+.status-trigger.is-confirmed .status-dot { background: var(--confirmed); }
+.status-trigger.is-cancelled { color: var(--cancelled); background: var(--cancelled-wash); border-color: rgba(193, 91, 65, 0.3); }
+.status-trigger.is-cancelled .status-dot { background: var(--cancelled); }
+
+.status-menu {
+    position: absolute; top: calc(100% + 6px); left: 0; min-width: 150px; padding: 0.4rem;
+    background: #221B14; border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5); display: none; z-index: 80;
+}
+.status-menu.is-open { display: block; }
+.status-menu button {
+    display: flex; align-items: center; gap: 0.55rem; width: 100%; padding: 0.55rem 0.7rem;
+    background: transparent; border: none; color: var(--ivory); text-align: left; border-radius: 7px;
+    cursor: pointer; font-size: 0.83rem;
+}
+.status-menu button:hover { background: rgba(255, 255, 255, 0.06); }
+.status-menu button.is-current { color: var(--taupe); cursor: default; }
+.status-menu button.is-current:hover { background: transparent; }
+.status-menu .menu-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.status-menu button[data-status="pending"] .menu-dot { background: var(--pending); }
+.status-menu button[data-status="confirmed"] .menu-dot { background: var(--confirmed); }
+.status-menu button[data-status="cancelled"] .menu-dot { background: var(--cancelled); }
+
+/* Row actions */
+.actions-cell { display: flex; gap: 1.1rem; }
+.link-btn { background: none; border: none; padding: 0; font-size: 0.85rem; cursor: pointer; font-weight: 600; }
+.link-btn--view { color: var(--brass); }
+.link-btn--view:hover { color: var(--brass-hover); }
+.link-btn--delete { color: var(--taupe); }
+.link-btn--delete:hover { color: var(--cancelled); }
+
+/* State panels: loading / empty / error */
+.state-panel { padding: 3rem 1.5rem; text-align: center; }
+.state-panel svg { margin: 0 auto 1rem; color: var(--taupe-dim); }
+.state-panel h3 { font-family: var(--font-serif); font-weight: 500; font-size: 1.15rem; margin-bottom: 0.4rem; }
+.state-panel p { color: var(--taupe); font-size: 0.9rem; max-width: 360px; margin: 0 auto; }
+.state-panel.is-error h3 { color: #E39A85; }
+.state-panel .btn { margin-top: 1.25rem; }
+
+/* Loading skeleton */
+.skeleton-row td { padding: 1.1rem 1.25rem; }
+.skeleton-bar {
+    height: 12px; border-radius: 4px;
+    background: linear-gradient(90deg, var(--line-soft) 25%, var(--surface-hover) 37%, var(--line-soft) 63%);
+    background-size: 400% 100%; animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+/* Mobile: table rows become stacked cards */
+@media (max-width: 760px) {
+    .table-scroll table, .table-scroll thead, .table-scroll tbody,
+    .table-scroll th, .table-scroll td, .table-scroll tr { display: block; width: 100%; }
+    .table-scroll thead { display: none; }
+    .table-scroll tbody tr { border: 1px solid var(--line); border-radius: 12px; padding: 0.25rem 1rem; margin: 0.9rem; }
+    .table-scroll td {
+        display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        padding: 0.7rem 0; border-bottom: 1px dashed var(--line-soft); white-space: normal; text-align: right;
+    }
+    .table-scroll tr td:last-child { border-bottom: none; }
+    .table-scroll td::before { content: attr(data-label); color: var(--taupe); font-size: 0.72rem; text-align: left; flex-shrink: 0; }
+    .table-scroll td.actions-td { justify-content: flex-end; }
+}
+
+/* =========================================================================
+   MODALS
+   ========================================================================= */
+.modal-overlay {
+    position: fixed; inset: 0; background: rgba(10, 8, 6, 0.78); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; z-index: 200; padding: 1.25rem;
+    opacity: 0; transition: opacity 0.2s var(--ease);
+}
+.modal-overlay.is-open { display: flex; opacity: 1; }
+.modal {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    width: 100%; max-width: 520px; padding: 2rem; box-shadow: var(--shadow-modal);
+    transform: translateY(16px) scale(0.98); transition: transform 0.22s var(--ease);
+    max-height: 90vh; overflow-y: auto;
+}
+.modal-overlay.is-open .modal { transform: translateY(0) scale(1); }
+
+.modal__header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 1.5rem; padding-bottom: 1.1rem; border-bottom: 1px solid var(--line);
+}
+.modal__title { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 500; }
+.modal__close { background: transparent; border: none; color: var(--taupe); font-size: 1.4rem; line-height: 1; cursor: pointer; padding: 0.2rem; }
+.modal__close:hover { color: var(--ivory); }
+
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 1rem; margin-bottom: 1.5rem; }
+.detail__label { font-size: 0.72rem; color: var(--taupe); margin-bottom: 0.3rem; }
+.detail__value { font-size: 0.95rem; }
+.detail__requests {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 0.9rem 1rem; font-size: 0.88rem; color: var(--taupe); min-height: 60px; line-height: 1.6;
+}
+
+.modal--delete { max-width: 400px; text-align: center; }
+.modal--delete .modal__title { margin-bottom: 0.6rem; }
+.modal--delete p { color: var(--taupe); font-size: 0.92rem; margin-bottom: 1.75rem; }
+.modal-actions { display: flex; gap: 1rem; justify-content: center; }
+
+@media (max-width: 480px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .modal { padding: 1.5rem; }
+}
+
+/* =========================================================================
+   TOASTS
+   ========================================================================= */
+.toast-stack { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.7rem; z-index: 300; }
+@media (max-width: 600px) { .toast-stack { left: 1rem; right: 1rem; align-items: center; } }
+.toast {
+    display: flex; align-items: flex-start; gap: 0.75rem; background: #1E1811; border: 1px solid var(--line);
+    border-left: 3px solid var(--confirmed); padding: 0.85rem 1.1rem; border-radius: var(--radius-sm);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5); max-width: 360px; width: max-content;
+    opacity: 0; transform: translateY(10px); animation: toast-in 0.25s var(--ease) forwards;
+}
+.toast--error { border-left-color: var(--cancelled); }
+.toast--warning { border-left-color: var(--pending); }
+.toast__icon { flex-shrink: 0; margin-top: 1px; }
+.toast--success .toast__icon { color: var(--confirmed); }
+.toast--error .toast__icon { color: var(--cancelled); }
+.toast--warning .toast__icon { color: var(--pending); }
+.toast__text { font-size: 0.88rem; line-height: 1.45; }
+.toast__close { margin-left: auto; background: none; border: none; color: var(--taupe); cursor: pointer; padding: 0 0 0 0.5rem; font-size: 1rem; line-height: 1; }
+@keyframes toast-in { to { opacity: 1; transform: translateY(0); } }
+.toast.is-leaving { animation: toast-out 0.18s var(--ease) forwards; }
+@keyframes toast-out { to { opacity: 0; transform: translateY(6px); } }
+</style>
+</head>
+<body>
+
+<div id="toastStack" class="toast-stack" aria-live="polite"></div>
+
+<!-- ==========================================================================
+     LOGIN SCREEN
+     ========================================================================== -->
+<div id="loginScreen" class="login-screen">
+    <div class="login-card">
+        <div class="login-brand">
+            <div class="brand-mark">NOIR<span>.</span></div>
+            <p>Admin sign in</p>
+        </div>
+        <div class="login-panel">
+            <div id="loginError" class="login-error"></div>
+            <form id="loginForm" novalidate>
+                <div class="field">
+                    <label for="loginUsername">Username or email</label>
+                    <input type="text" id="loginUsername" autocomplete="username">
+                </div>
+                <div class="field">
+                    <label for="loginPassword">Password</label>
+                    <div class="password-field">
+                        <input type="password" id="loginPassword" autocomplete="current-password">
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Show password">
+                            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                                <line class="eye-slash" x1="3" y1="3" x2="21" y2="21"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <label class="checkbox-field">
+                        <input type="checkbox" id="rememberMe">
+                        Keep me signed in on this device
+                    </label>
+                </div>
+                <button type="submit" class="btn btn--primary btn--block" id="loginSubmitBtn">
+                    <span class="spinner" id="loginSpinner" style="display:none;"></span>
+                    <span id="loginBtnText">Sign in</span>
+                </button>
+            </form>
+            <p class="login-note">This sign-in currently checks a placeholder set in the code below — connect a real authentication endpoint before using this dashboard in production. The reservations API itself has no authentication yet, so securing it server-side is the next step.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     APP SHELL
+     ========================================================================== -->
+<div id="appShell" style="display:none;">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark">NOIR<span>.</span></div>
+            <div class="brand-sub">Admin dashboard</div>
+        </div>
+        <button class="btn btn--ghost" id="openChangePasswordBtn">Account</button>
+        <button class="btn btn--ghost" id="logoutBtn">Log out</button>
+    </header>
+
+    <main class="dashboard">
+        <div class="dashboard-head">
+            <h1>Reservations</h1>
+            <p>Manage, review, and update café reservation requests.</p>
+        </div>
+
+        <section class="stats-strip">
+            <div class="stat">
+                <div class="stat__value" id="statTotal">0</div>
+                <div class="stat__label">Total reservations</div>
+            </div>
+            <div class="stat stat--pending">
+                <div class="stat__value" id="statPending">0</div>
+                <div class="stat__label">Pending</div>
+            </div>
+            <div class="stat stat--confirmed">
+                <div class="stat__value" id="statConfirmed">0</div>
+                <div class="stat__label">Confirmed</div>
+            </div>
+            <div class="stat stat--cancelled">
+                <div class="stat__value" id="statCancelled">0</div>
+                <div class="stat__label">Cancelled</div>
+            </div>
+        </section>
+
+        <section class="toolbar">
+            <div class="field field--search">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                    <input type="text" id="searchInput" placeholder="Search by ID, name, or phone">
+                </div>
+            </div>
+            <div class="field">
+                <select id="statusFilter">
+                    <option value="all">All statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="field">
+                <input type="date" id="dateFilter">
+            </div>
+        </section>
+
+        <section class="table-card">
+            <div id="loadingState">
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Customer</th><th>Phone</th><th>Date</th><th>Time</th><th class="num">Guests</th><th>Status</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="skeletonBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="errorState" class="state-panel is-error" style="display:none;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+                <h3>Can't reach the server</h3>
+                <p>Make sure the NOIR backend is running on localhost:5000, then try again.</p>
+                <button class="btn btn--ghost" id="retryBtn">Retry</button>
+            </div>
+
+            <div id="emptyState" class="state-panel" style="display:none;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 3h12l4 6-10 12L2 9Z"/><path d="M2 9h20M9 3l1 6-3 3M15 3l-1 6 3 3"/></svg>
+                <h3 id="emptyStateTitle">No reservations found</h3>
+                <p id="emptyStateText">New bookings will appear here as guests reserve a table.</p>
+            </div>
+
+            <div id="tableWrap" class="table-scroll" style="display:none;">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Customer</th><th>Phone</th><th>Date</th><th>Time</th><th class="num">Guests</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div id="changePasswordModal" class="modal-overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="changePasswordTitle">
+        <div class="modal__header">
+            <h2 class="modal__title" id="changePasswordTitle">Change password</h2>
+            <button type="button" class="modal__close" id="closeChangePasswordModal" aria-label="Close">&times;</button>
+        </div>
+
+        <form id="changePasswordForm" novalidate autocomplete="off">
+            <div id="changePasswordError" class="login-error"></div>
+
+            <div class="field">
+                <label for="currentPassword">Current password</label>
+                <div class="password-field">
+                    <input type="password" id="currentPassword" autocomplete="current-password">
+                    <button type="button" class="password-toggle" data-target="currentPassword" aria-label="Show password">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>
+                            <line class="eye-slash" x1="3" y1="3" x2="21" y2="21"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="newPassword">New password</label>
+                <div class="password-field">
+                    <input type="password" id="newPassword" autocomplete="new-password" minlength="8">
+                    <button type="button" class="password-toggle" data-target="newPassword" aria-label="Show password">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>
+                            <line class="eye-slash" x1="3" y1="3" x2="21" y2="21"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="confirmPassword">Confirm new password</label>
+                <div class="password-field">
+                    <input type="password" id="confirmPassword" autocomplete="new-password" minlength="8">
+                    <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Show password">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>
+                            <line class="eye-slash" x1="3" y1="3" x2="21" y2="21"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn--ghost" id="cancelChangePasswordBtn">Cancel</button>
+                <button type="submit" class="btn btn--primary" id="changePasswordSubmitBtn">
+                    <span id="changePasswordSpinner" class="spinner" style="display:none;"></span>
+                    <span id="changePasswordBtnText">Change password</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     VIEW MODAL
+     ========================================================================== -->
+<div id="viewModal" class="modal-overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="viewModalTitle">
+        <div class="modal__header">
+            <h2 class="modal__title" id="viewModalTitle">Reservation details</h2>
+            <button class="modal__close" id="closeViewModal" aria-label="Close">&times;</button>
+        </div>
+        <div class="detail-grid">
+            <div><div class="detail__label">Reservation</div><div class="detail__value" id="modalId"></div></div>
+            <div><div class="detail__label">Status</div><div class="detail__value"><span id="modalStatus" class="status-trigger" style="cursor:default;"></span></div></div>
+            <div><div class="detail__label">Customer</div><div class="detail__value" id="modalName"></div></div>
+            <div><div class="detail__label">Phone</div><div class="detail__value" id="modalPhone"></div></div>
+            <div><div class="detail__label">Date</div><div class="detail__value" id="modalDate"></div></div>
+            <div><div class="detail__label">Time</div><div class="detail__value" id="modalTime"></div></div>
+            <div><div class="detail__label">Guests</div><div class="detail__value" id="modalGuests"></div></div>
+            <div><div class="detail__label">Booked on</div><div class="detail__value" id="modalCreated"></div></div>
+        </div>
+        <div>
+            <div class="detail__label" style="margin-bottom:.5rem;">Special requests</div>
+            <div class="detail__requests" id="modalRequests"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     DELETE CONFIRMATION MODAL
+     ========================================================================== -->
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal modal--delete" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+        <h2 class="modal__title" id="deleteModalTitle">Delete reservation?</h2>
+        <p id="deleteModalText"></p>
+        <div class="modal-actions">
+            <button class="btn btn--ghost" id="cancelDeleteBtn">Cancel</button>
+            <button class="btn btn--danger" id="confirmDeleteBtn">
+                <span class="spinner" id="deleteSpinner" style="display:none;"></span>
+                <span id="deleteBtnText">Delete</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+const API_BASE = 'http://localhost:5000/api/reservations';
+const LOGIN_API = 'http://localhost:5000/api/auth/login';
+
+const TOKEN_KEY = 'noir_admin_token';
+
+function getAuthToken() {
+    return sessionStorage.getItem(TOKEN_KEY) ||
+           localStorage.getItem(TOKEN_KEY);
+}
+
+function authenticateUser(username, password) {
+    return fetch(LOGIN_API, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username,
+            password
+        })
+    })
+    .then(async response => {
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            return {
+                success: false,
+                message: result.message || 'Login failed.'
+            };
+        }
+
+        return {
+            success: true,
+            token: result.token
+        };
+    })
+    .catch(error => {
+        console.error('Login error:', error);
+
+        return {
+            success: false,
+            message: 'Unable to connect to the server.'
+        };
+    });
+}
+
+function hasActiveSession() {
+    return !!getAuthToken();
+}
+
+function startSession(token, remember) {
+    if (remember) {
+        localStorage.setItem(TOKEN_KEY, token);
+    } else {
+        sessionStorage.setItem(TOKEN_KEY, token);
+    }
+}
+
+function endSession() {
+    sessionStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+}
+
+
+/* =========================================================================
+   GLOBAL STATE
+   ========================================================================= */
+let allReservations = [];
+let pendingDeleteId = null;
+
+/* =========================================================================
+   DOM REFERENCES
+   ========================================================================= */
+const loginScreen = document.getElementById('loginScreen');
+const appShell = document.getElementById('appShell');
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
+const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+const loginSpinner = document.getElementById('loginSpinner');
+const loginBtnText = document.getElementById('loginBtnText');
+const togglePasswordBtn = document.getElementById('togglePassword');
+const passwordInput = document.getElementById('loginPassword');
+const logoutBtn = document.getElementById('logoutBtn');
+
+const loadingState = document.getElementById('loadingState');
+const errorState = document.getElementById('errorState');
+const emptyState = document.getElementById('emptyState');
+const tableWrap = document.getElementById('tableWrap');
+const tableBody = document.getElementById('tableBody');
+const skeletonBody = document.getElementById('skeletonBody');
+const retryBtn = document.getElementById('retryBtn');
+
+const searchInput = document.getElementById('searchInput');
+const statusFilter = document.getElementById('statusFilter');
+const dateFilter = document.getElementById('dateFilter');
+
+const statTotal = document.getElementById('statTotal');
+const statPending = document.getElementById('statPending');
+const statConfirmed = document.getElementById('statConfirmed');
+const statCancelled = document.getElementById('statCancelled');
+
+const viewModal = document.getElementById('viewModal');
+const deleteModal = document.getElementById('deleteModal');
+const toastStack = document.getElementById('toastStack');
+
+/* =========================================================================
+   INITIALISATION
+   ========================================================================= */
+document.addEventListener('DOMContentLoaded', () => {
+    renderSkeleton();
+    hasActiveSession() ? showApp() : showLogin();
+});
+
+function showLogin() {
+    loginScreen.style.display = 'flex';
+    appShell.style.display = 'none';
+}
+function showApp() {
+    loginScreen.style.display = 'none';
+    appShell.style.display = 'block';
+    fetchReservations();
+}
+
+/* =========================================================================
+   LOGIN
+   ========================================================================= */
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.classList.remove('show');
+
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = passwordInput.value;
+    const remember = document.getElementById('rememberMe').checked;
+
+    if (!username || !password) {
+        loginError.textContent = 'Enter a username and password.';
+        loginError.classList.add('show');
+        return;
+    }
+
+    setLoginLoading(true);
+    const result = await authenticateUser(username, password);
+    setLoginLoading(false);
+
+    if (result.success) {
+        startSession(result.token, remember);
+        loginForm.reset();
+        showApp();
+    } else {
+        loginError.textContent = result.message;
+        loginError.classList.add('show');
+    }
+});
+
+function setLoginLoading(isLoading) {
+    loginSubmitBtn.disabled = isLoading;
+    loginSpinner.style.display = isLoading ? 'inline-block' : 'none';
+    loginBtnText.textContent = isLoading ? 'Signing in…' : 'Sign in';
+}
+
+togglePasswordBtn.addEventListener('click', () => {
+    const isHidden = passwordInput.type === 'password';
+    passwordInput.type = isHidden ? 'text' : 'password';
+    document.querySelector('#eyeIcon .eye-slash').style.display = isHidden ? 'block' : 'none';
+    togglePasswordBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+});
+
+logoutBtn.addEventListener('click', () => {
+    endSession();
+    allReservations = [];
+    showLogin();
+});
+
+/* =========================================================================
+   CHANGE PASSWORD
+   ========================================================================= */
+const changePasswordModal = document.getElementById('changePasswordModal');
+const openChangePasswordBtn = document.getElementById('openChangePasswordBtn');
+const closeChangePasswordModalBtn = document.getElementById('closeChangePasswordModal');
+const cancelChangePasswordBtn = document.getElementById('cancelChangePasswordBtn');
+const changePasswordForm = document.getElementById('changePasswordForm');
+const changePasswordError = document.getElementById('changePasswordError');
+const changePasswordSubmitBtn = document.getElementById('changePasswordSubmitBtn');
+const changePasswordSpinner = document.getElementById('changePasswordSpinner');
+const changePasswordBtnText = document.getElementById('changePasswordBtnText');
+
+function openChangePasswordModal() {
+    changePasswordError.classList.remove('show');
+    changePasswordForm.reset();
+    openModal(changePasswordModal);
+}
+function closeChangePasswordModal() {
+    closeModal(changePasswordModal);
+    changePasswordForm.reset();
+}
+
+openChangePasswordBtn.addEventListener('click', openChangePasswordModal);
+closeChangePasswordModalBtn.addEventListener('click', closeChangePasswordModal);
+cancelChangePasswordBtn.addEventListener('click', closeChangePasswordModal);
+changePasswordModal.addEventListener('click', (e) => {
+    if (e.target === changePasswordModal) closeChangePasswordModal();
+});
+
+// Show/hide toggles for all three password fields
+document.querySelectorAll('#changePasswordModal .password-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target);
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        btn.querySelector('.eye-slash').style.display = isHidden ? 'block' : 'none';
+        btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+    });
+});
+
+function validatePasswordChange(current, next, confirm) {
+    if (!current || !next || !confirm) return 'Please fill in all password fields.';
+    if (next.length < 8) return 'New password must be at least 8 characters.';
+    if (next !== confirm) return 'New passwords do not match.';
+    return null;
+}
+
+function setChangePasswordLoading(isLoading) {
+    changePasswordSubmitBtn.disabled = isLoading;
+    changePasswordSpinner.style.display = isLoading ? 'inline-block' : 'none';
+    changePasswordBtnText.textContent = isLoading ? 'Changing…' : 'Change password';
+}
+
+changePasswordForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    changePasswordError.classList.remove('show');
+
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    const validationError = validatePasswordChange(currentPassword, newPassword, confirmPassword);
+    if (validationError) {
+        changePasswordError.textContent = validationError;
+        changePasswordError.classList.add('show');
+        return;
+    }
+
+    const token = getAuthToken();
+    if (!token) {
+        changePasswordError.textContent = 'Your session has expired. Please log in again.';
+        changePasswordError.classList.add('show');
+        return;
+    }
+
+    setChangePasswordLoading(true);
+
+    try {
+        const response = await fetch('http://localhost:5000/api/auth/change-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ currentPassword, newPassword })
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || !result.success) {
+            changePasswordError.textContent = result.message || 'Failed to change password.';
+            changePasswordError.classList.add('show');
+            return;
+        }
+
+        closeChangePasswordModal();
+        showToast('Password changed successfully.', 'success');
+    } catch (error) {
+        console.error('Change password error:', error);
+        changePasswordError.textContent = 'Could not connect to the backend server.';
+        changePasswordError.classList.add('show');
+    } finally {
+        setChangePasswordLoading(false);
+    }
+});
+
+/* =========================================================================
+   FETCH RESERVATIONS
+   ========================================================================= */
+async function fetchReservations() {
+    loadingState.style.display = 'block';
+    errorState.style.display = 'none';
+    emptyState.style.display = 'none';
+    tableWrap.style.display = 'none';
+
+    try {
+        const response = await fetch(API_BASE, {
+    headers: {
+        'Authorization': `Bearer ${getAuthToken()}`
+    }
+});
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            allReservations = result.reservations || [];
+            loadingState.style.display = 'none';
+            updateStats();
+            applyFilters();
+        } else {
+            throw new Error('API returned a failure status.');
+        }
+    } catch (error) {
+        console.error('Failed to fetch reservations:', error);
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
+    }
+}
+retryBtn.addEventListener('click', fetchReservations);
+
+function renderSkeleton() {
+    const widths = [36, 110, 90, 70, 50, 30, 80, 70];
+    skeletonBody.innerHTML = Array.from({ length: 5 }).map(() => `
+        <tr class="skeleton-row">
+            ${widths.map(w => `<td><div class="skeleton-bar" style="width:${w}px;"></div></td>`).join('')}
+        </tr>`).join('');
+}
+
+/* =========================================================================
+   RENDER TABLE
+   ========================================================================= */
+function renderTable(data) {
+    if (data.length === 0) {
+        tableWrap.style.display = 'none';
+        emptyState.style.display = 'block';
+        const hasAnyData = allReservations.length > 0;
+        document.getElementById('emptyStateTitle').textContent = hasAnyData ? 'No matches' : 'No reservations found';
+        document.getElementById('emptyStateText').textContent = hasAnyData
+            ? 'Try a different search term or clear the filters.'
+            : 'New bookings will appear here as guests reserve a table.';
+        return;
+    }
+
+    emptyState.style.display = 'none';
+    tableWrap.style.display = 'block';
+    tableBody.innerHTML = data.map(buildRow).join('');
+}
+
+function buildRow(res) {
+    const status = res.status || 'pending';
+    return `
+        <tr>
+            <td data-label="ID">#${res.id}</td>
+            <td data-label="Customer">${escapeHtml(res.name || '—')}</td>
+            <td data-label="Phone">${escapeHtml(res.phone || '—')}</td>
+            <td data-label="Date">${formatDate(res.date)}</td>
+            <td data-label="Time">${formatTime(res.time)}</td>
+            <td data-label="Guests" class="num">${res.guests ?? '—'}</td>
+            <td data-label="Status">${buildStatusControl(res.id, status)}</td>
+            <td data-label="Actions" class="actions-td">
+                <div class="actions-cell">
+                    <button class="link-btn link-btn--view" onclick="viewReservation(${res.id})">View</button>
+                    <button class="link-btn link-btn--delete" onclick="openDeleteModal(${res.id})">Delete</button>
+                </div>
+            </td>
+        </tr>`;
+}
+
+function buildStatusControl(id, status) {
+    const statuses = ['pending', 'confirmed', 'cancelled'];
+    const menuItems = statuses.map(s => {
+        const isCurrent = s === status;
+        return `<button data-status="${s}" class="${isCurrent ? 'is-current' : ''}" ${isCurrent ? 'disabled' : ''} onclick="handleStatusSelect(event, ${id}, '${s}')">
+                    <span class="menu-dot"></span>${capitalize(s)}
+                </button>`;
+    }).join('');
+
+    return `
+        <div class="status-control" data-row-id="${id}">
+            <button type="button" class="status-trigger is-${status}" aria-haspopup="true" aria-expanded="false" onclick="toggleStatusMenu(event, ${id})">
+                <span class="status-dot"></span>${capitalize(status)}
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="status-menu" id="statusMenu-${id}">${menuItems}</div>
+        </div>`;
+}
+
+/* =========================================================================
+   STATUS MENU (click-based popover — works on touch, not just hover)
+   ========================================================================= */
+function toggleStatusMenu(event, id) {
+    event.stopPropagation();
+    const menu = document.getElementById(`statusMenu-${id}`);
+    const wasOpen = menu.classList.contains('is-open');
+    closeAllStatusMenus();
+    if (!wasOpen) {
+        menu.classList.add('is-open');
+        event.currentTarget.setAttribute('aria-expanded', 'true');
+    }
+}
+function closeAllStatusMenus() {
+    document.querySelectorAll('.status-menu.is-open').forEach(m => m.classList.remove('is-open'));
+    document.querySelectorAll('.status-trigger[aria-expanded="true"]').forEach(t => t.setAttribute('aria-expanded', 'false'));
+}
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.status-control')) closeAllStatusMenus();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeAllStatusMenus();
+        closeViewModal();
+        closeDeleteModal();
+        closeChangePasswordModal();
+    }
+});
+
+async function handleStatusSelect(event, id, newStatus) {
+    event.stopPropagation();
+    closeAllStatusMenus();
+    await updateStatus(id, newStatus);
+}
+
+async function updateStatus(id, status) {
+    try {
+        const response = await fetch(`${API_BASE}/${id}/status`, {
+            method: 'PATCH',
+            headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAuthToken()}`
+},
+            body: JSON.stringify({ status })
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            showToast(result.message || 'Could not update the status.', 'error');
+            return;
+        }
+
+        const reservation = allReservations.find(r => r.id === id);
+        if (reservation) reservation.status = status;
+
+        updateStats();
+        applyFilters();
+        showToast(`Reservation #${id} marked as ${status}.`, 'success');
+    } catch (error) {
+        console.error('Status update error:', error);
+        showToast('Could not connect to the backend server.', 'error');
+    }
+}
+
+/* =========================================================================
+   STATS
+   ========================================================================= */
+function updateStats() {
+    statTotal.textContent = allReservations.length;
+    statPending.textContent = allReservations.filter(r => r.status === 'pending').length;
+    statConfirmed.textContent = allReservations.filter(r => r.status === 'confirmed').length;
+    statCancelled.textContent = allReservations.filter(r => r.status === 'cancelled').length;
+}
+
+/* =========================================================================
+   SEARCH + FILTERS
+   ========================================================================= */
+function applyFilters() {
+    const term = searchInput.value.trim().toLowerCase();
+    const statusValue = statusFilter.value;
+    const dateValue = dateFilter.value;
+
+    const filtered = allReservations.filter(res => {
+        const matchesSearch = term === ''
+            || String(res.id).includes(term)
+            || `#${res.id}`.includes(term)
+            || (res.name || '').toLowerCase().includes(term)
+            || (res.phone || '').includes(term);
+        const matchesStatus = statusValue === 'all' || res.status === statusValue;
+        const matchesDate = !dateValue || res.date === dateValue;
+        return matchesSearch && matchesStatus && matchesDate;
+    });
+
+    renderTable(filtered);
+}
+searchInput.addEventListener('input', applyFilters);
+statusFilter.addEventListener('change', applyFilters);
+dateFilter.addEventListener('change', applyFilters);
+
+/* =========================================================================
+   VIEW MODAL
+   ========================================================================= */
+function viewReservation(id) {
+    const res = allReservations.find(r => r.id === id);
+    if (!res) return;
+
+    document.getElementById('modalId').textContent = `#${res.id}`;
+    document.getElementById('modalName').textContent = res.name || '—';
+    document.getElementById('modalPhone').textContent = res.phone || '—';
+    document.getElementById('modalDate').textContent = formatDate(res.date);
+    document.getElementById('modalTime').textContent = formatTime(res.time);
+    document.getElementById('modalGuests').textContent = res.guests ?? '—';
+    document.getElementById('modalRequests').textContent = res.special_requests || 'No special requests.';
+    document.getElementById('modalCreated').textContent = res.created_at ? formatDateTime(res.created_at) : '—';
+
+    const statusEl = document.getElementById('modalStatus');
+    statusEl.className = `status-trigger is-${res.status || 'pending'}`;
+    statusEl.style.cursor = 'default';
+    statusEl.innerHTML = `<span class="status-dot"></span>${capitalize(res.status || 'pending')}`;
+
+    openModal(viewModal);
+}
+function closeViewModal() { closeModal(viewModal); }
+document.getElementById('closeViewModal').addEventListener('click', closeViewModal);
+viewModal.addEventListener('click', (e) => { if (e.target === viewModal) closeViewModal(); });
+
+/* =========================================================================
+   DELETE MODAL
+   ========================================================================= */
+function openDeleteModal(id) {
+    pendingDeleteId = id;
+    document.getElementById('deleteModalText').textContent = `This will permanently remove reservation #${id}. This can't be undone.`;
+    openModal(deleteModal);
+}
+function closeDeleteModal() {
+    pendingDeleteId = null;
+    closeModal(deleteModal);
+}
+document.getElementById('cancelDeleteBtn').addEventListener('click', closeDeleteModal);
+deleteModal.addEventListener('click', (e) => { if (e.target === deleteModal) closeDeleteModal(); });
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+    if (!pendingDeleteId) return;
+    const id = pendingDeleteId;
+    const btn = document.getElementById('confirmDeleteBtn');
+    const spinner = document.getElementById('deleteSpinner');
+    const btnText = document.getElementById('deleteBtnText');
+
+    btn.disabled = true;
+    spinner.style.display = 'inline-block';
+    btnText.textContent = 'Deleting…';
+
+    try {
+        const response = await fetch(`${API_BASE}/${id}`, {
+    method: 'DELETE',
+    headers: {
+        'Authorization': `Bearer ${getAuthToken()}`
+    }
+});
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            showToast(result.message || 'Could not delete the reservation.', 'error');
+            return;
+        }
+
+        allReservations = allReservations.filter(r => r.id !== id);
+        updateStats();
+        applyFilters();
+        closeDeleteModal();
+        showToast(`Reservation #${id} deleted.`, 'success');
+    } catch (error) {
+        console.error('Delete error:', error);
+        showToast('Could not connect to the backend server.', 'error');
+    } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+        btnText.textContent = 'Delete';
+    }
+});
+
+/* =========================================================================
+   MODAL HELPERS
+   ========================================================================= */
+function openModal(modalEl) {
+    modalEl.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+}
+function closeModal(modalEl) {
+    modalEl.classList.remove('is-open');
+    const anyModalOpen = [viewModal, deleteModal, changePasswordModal]
+        .some(m => m.classList.contains('is-open'));
+    if (!anyModalOpen) {
+        document.body.style.overflow = '';
+    }
+}
+
+/* =========================================================================
+   TOASTS
+   ========================================================================= */
+function showToast(message, type) {
+    type = type || 'success';
+    const icons = {
+        success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>',
+        error: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+        warning: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v4M12 17h.01"/><path d="m10.3 3.9-8.5 14.7A1 1 0 0 0 2.6 20h18.8a1 1 0 0 0 .87-1.4L13.7 3.9a1 1 0 0 0-1.74 0Z"/></svg>'
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast--${type}`;
+    toast.innerHTML = `
+        <span class="toast__icon">${icons[type] || icons.success}</span>
+        <span class="toast__text">${escapeHtml(message)}</span>
+        <button class="toast__close" aria-label="Dismiss">&times;</button>
+    `;
+    toastStack.appendChild(toast);
+
+    const remove = () => {
+        toast.classList.add('is-leaving');
+        setTimeout(() => toast.remove(), 200);
+    };
+    toast.querySelector('.toast__close').addEventListener('click', remove);
+    setTimeout(remove, 4000);
+}
+
+/* =========================================================================
+   FORMATTING HELPERS
+   ========================================================================= */
+function capitalize(str) {
+    return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+}
+function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return dateStr;
+    return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function formatTime(timeStr) {
+    if (!timeStr) return '—';
+    const [h, m] = timeStr.split(':').map(Number);
+    if (isNaN(h) || isNaN(m)) return timeStr;
+    const period = h >= 12 ? 'PM' : 'AM';
+    const hour12 = h % 12 === 0 ? 12 : h % 12;
+    return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+}
+function formatDateTime(isoStr) {
+    const date = new Date(isoStr);
+    if (isNaN(date.getTime())) return isoStr;
+    return date.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+</script>
+</body>
+</html>

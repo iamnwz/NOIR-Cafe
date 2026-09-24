@@ -21,6 +21,7 @@
                 <a href="#home" class="nav-link">Home</a>
                 <a href="#about" class="nav-link">About</a>
                 <a href="#menu" class="nav-link">Menu</a>
+                <a href="#reservation" class="nav-link">Reservation</a>
                 <a href="#gallery" class="nav-link">Gallery</a>
                 <a href="#reviews" class="nav-link">Reviews</a>
                 <a href="#contact" class="nav-link">Contact</a>
@@ -41,7 +42,7 @@
             <p>Experience artisanal brews, handcrafted pastries, and a serene minimalist atmosphere right in the heart of Karachi.</p>
             <div class="hero-buttons">
                 <a href="#menu" class="btn btn-primary">View Menu</a>
-                <a href="#contact" class="btn btn-secondary">Find Us</a>
+                <a href="#reservation" class="btn btn-secondary">Book a Table</a>
             </div>
         </div>
         <div class="hero-image">
@@ -168,6 +169,68 @@
                         <span class="price">Rs. 720</span>
                     </div>
                     <p>Rich single-origin Belgian chocolate ganache in a crisp cocoa shortcrust shell.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation Section -->
+    <section id="reservation" class="reservation">
+        <div class="container">
+            <div class="section-title">
+                <h2>Reserve a Table</h2>
+                <p>Book your spot in advance to enjoy a seamless coffee and dining experience.</p>
+            </div>
+            
+            <div class="reservation-card">
+                <!-- Replace existing form with this updated form -->
+                <form id="reservationForm" class="reservation-form" novalidate>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="resName">Full Name</label>
+                            <input type="text" id="resName" required placeholder="Your full name">
+                            <span class="error-msg" id="nameError">Please enter a valid name (letters only).</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="resPhone">Phone Number</label>
+                            <input type="tel" id="resPhone" required placeholder="0300 0000000">
+                            <span class="error-msg" id="phoneError">Please enter a valid phone number.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="resDate">Date</label>
+                            <input type="date" id="resDate" required>
+                            <span class="error-msg" id="dateError">Please select a valid future date.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="resTime">Time</label>
+                            <input type="time" id="resTime" required>
+                            <span class="error-msg" id="timeError">Please select a time.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="resGuests">Guests</label>
+                            <select id="resGuests" required>
+                                <option value="" disabled selected>Select guests</option>
+                                <option value="1">1 Person</option>
+                                <option value="2">2 Persons</option>
+                                <option value="3">3 Persons</option>
+                                <option value="4">4 Persons</option>
+                                <option value="5+">5+ Persons</option>
+                            </select>
+                            <span class="error-msg" id="guestError">Please select number of guests.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="resNotes">Special Requests (Optional)</label>
+                            <input type="text" id="resNotes" placeholder="e.g. Quiet corner, birthday surprise">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">Confirm Reservation</button>
+                </form>
+
+                <div id="reservationSuccess" class="reservation-success" style="display: none;">
+                    <h3>Table Reserved!</h3>
+                    <p>Thank you for choosing NOIR. We have received your request and will hold your table.</p>
+                    <button id="resResetBtn" class="btn btn-secondary">Book Another Table</button>
                 </div>
             </div>
         </div>
